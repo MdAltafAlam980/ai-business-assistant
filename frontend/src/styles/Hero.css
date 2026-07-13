@@ -1,0 +1,49 @@
+.hero {
+  text-align: center;
+  padding: 80px 20px;
+  background: #f5f7fb;
+}
+
+.hero h1 {
+  font-size: 52px;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 20px;
+  color: #64748b;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+.hero-input {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.hero-input input {
+  width: 500px;
+  padding: 15px;
+  font-size: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  outline: none;
+}
+
+.hero-input button {
+  padding: 15px 30px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.hero-input button:hover {
+  background: #1d4ed8;
+}

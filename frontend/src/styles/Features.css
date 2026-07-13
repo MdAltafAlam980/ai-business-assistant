@@ -1,0 +1,30 @@
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  padding: 60px;
+  background: white;
+}
+
+.feature-card {
+  background: #f8fafc;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+}
+
+.feature-card h2 {
+  margin-bottom: 15px;
+  color: #2563eb;
+}
+
+.feature-card p {
+  color: #555;
+  line-height: 1.6;
+}
