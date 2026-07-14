@@ -1,8 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const { GoogleGenAI } = require("@google/genai");
 
 const app = express();
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 app.use(cors());
 app.use(express.json());
@@ -13,12 +18,25 @@ app.get("/", (req, res) => {
 });
 
 // Chat API
-app.post("/api/chat", (req, res) => {
+app.post("/api/chat", async (req, res) => {
+  try {
   const { message } = req.body;
 
-  res.json({
-    reply: `You said: ${message}`,
+  const response = await ai.models.generateContent({
+    model: "gemini-3.5-flash",
+    contents: message,
   });
+
+  res.json({
+    reply: response.text,
+  });
+}  catch (error) {
+  console.error(error);
+
+  res.status(500).json({
+    reply: "Sorry, something went wrong. Please try again.",
+  });
+}
 });
 
 const PORT = process.env.PORT || 5000;
