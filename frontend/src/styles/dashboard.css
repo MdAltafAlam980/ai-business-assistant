@@ -1,0 +1,95 @@
+.dashboard-container {
+  margin-left: 270px;
+  padding: 30px;
+  background-color: #f5f7fb;
+  min-height: 100vh;
+}
+
+.dashboard-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-top: 20px;
+}
+
+.dashboard-subtitle {
+  color: #6b7280;
+  margin-top: 8px;
+  margin-bottom: 30px;
+}
+
+.cards-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 24px;
+  color: #1f2937;
+  margin-bottom: 20px;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.action-button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-button:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+}
+
+.blue {
+  background-color: #2563eb;
+}
+
+.green {
+  background-color: #16a34a;
+}
+
+.purple {
+  background-color: #9333ea;
+}
+
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.transactions-table th,
+.transactions-table td {
+  padding: 15px;
+  text-align: center;
+}
+
+.transactions-table thead {
+  background: #eef2ff;
+}
+
+.transactions-table tbody tr:hover {
+  background: #f9fafb;
+}
