@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+require("./config/database");
+
+const customerRoutes = require("./routes/customers");
 
 const { generateReply } = require("./services/aiService");
 
@@ -11,6 +14,7 @@ let chatHistory = [];
 
 app.use(cors());
 app.use(express.json());
+app.use("/api/customers", customerRoutes);
 
 // Home Route
 app.get("/", (req, res) => {

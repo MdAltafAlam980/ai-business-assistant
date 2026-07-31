@@ -6,20 +6,24 @@ function CustomerTable({ customers, onDelete, onEdit }) {
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Address</th>
-            <th>Actions</th>
+           <th>👤 Customer</th>
+           <th>📱 Phone</th>
+           <th>📧 Email</th>
+           <th>📍 Address</th>
+           <th>⚙️ Actions</th>
           </tr>
         </thead>
 
         <tbody>
           {customers.length === 0 ? (
             <tr>
-              <td colSpan="5" style={{ textAlign: "center" }}>
-                No customers found.
-              </td>
+             <td colSpan="5">
+  <div className="empty-state">
+    <h2>👥</h2>
+    <h3>No customers found</h3>
+    <p>Click "Add Customer" to create your first customer.</p>
+  </div>
+</td>
             </tr>
           ) : (
             customers.map((customer) => (
@@ -29,14 +33,23 @@ function CustomerTable({ customers, onDelete, onEdit }) {
                 <td>{customer.email || "-"}</td>
                 <td>{customer.address || "-"}</td>
                 <td>
-                  <button onClick={() => onEdit(customer)}>Edit</button>
 
-                  <button
-                    onClick={() => onDelete(customer.id)}
-                    style={{ marginLeft: "10px" }}
-                  >
-                    Delete
-                  </button>
+                  <div className="table-actions">
+                    <button
+                       className="edit-btn"
+                       onClick={() => onEdit(customer)}
+                      >
+                         ✏ Edit
+                      </button>
+
+                      <button
+                        className="delete-btn"
+                        onClick={() => onDelete(customer.id)}
+                      >
+                        🗑 Delete 
+                      </button>
+                   </div>
+
                 </td>
               </tr>
             ))

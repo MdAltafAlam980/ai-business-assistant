@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { FaUsers, FaSearch, FaPhoneAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import CustomerForm from "../components/CustomerForm";
@@ -6,8 +8,9 @@ import CustomerTable from "../components/CustomerTable";
 import "../styles/dashboard.css";
 
 function Customers() {
-  const [customers, setCustomers] = useState([]);
+  const API_URL = "http://localhost:5000/api/customers";
 
+  const [customers, setCustomers] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
   const [name, setName] = useState("");
@@ -26,47 +29,117 @@ function Customers() {
     setEditingId(null);
   };
 
-  const handleSaveCustomer = () => {
-    if (!name || !phone) {
-      alert("Customer Name and Phone Number are required.");
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch(API_URL);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch customers");
+      }
+
+      const data = await response.json();
+      setCustomers(data);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      toast.error("Unable to load customers.");
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const handleSaveCustomer = async () => {
+    if (!name.trim() || !phone.trim()) {
+      toast.warning("Customer Name and Phone Number are required.");
       return;
     }
 
-    if (editingId !== null) {
-      setCustomers(
-        customers.map((customer) =>
-          customer.id === editingId
-            ? {
-                ...customer,
-                name,
-                phone,
-                email,
-                address,
-              }
-            : customer
-        )
-      );
-    } else {
-      const newCustomer = {
-        id: Date.now(),
-        name,
-        phone,
-        email,
-        address,
-      };
+    try {
+      let response;
 
-      setCustomers([...customers, newCustomer]);
+      if (editingId !== null) {
+        response = await fetch(`${API_URL}/${editingId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            phone,
+            email,
+            address,
+          }),
+        });
+
+       if (!response.ok) {
+  const errorData = await response.json();
+  throw new Error(errorData.error);
+}
+      } else {
+        response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            phone,
+            email,
+            address,
+          }),
+        });
+
+        if (!response.ok) {
+  const errorData = await response.json();
+  throw new Error(errorData.error);
+}
+      }
+
+      await fetchCustomers();
+
+      if (editingId !== null) {
+        toast.success("Customer updated successfully!");
+      } else {
+        toast.success("Customer added successfully!");
+      }
+
+      resetForm();
+      setShowForm(false);
+
+    }catch (error) {
+  console.error("Error saving customer:", error);
+  toast.error(error.message);
+}
+  };
+
+  const handleDeleteCustomer = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this customer?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete customer");
+      }
+
+      await fetchCustomers();
+
+      toast.success("Customer deleted successfully!");
+
+    } catch (error) {
+      console.error("Delete Error:", error);
+      toast.error("Unable to delete customer.");
     }
-
-    resetForm();
-    setShowForm(false);
   };
 
-  const handleDeleteCustomer = (id) => {
-    setCustomers(customers.filter((customer) => customer.id !== id));
-  };
-
-  const handleEditCustomer = (customer) => {
+    const handleEditCustomer = (customer) => {
     setEditingId(customer.id);
     setName(customer.name);
     setPhone(customer.phone);
@@ -75,9 +148,28 @@ function Customers() {
     setShowForm(true);
   };
 
-  const filteredCustomers = customers.filter((customer) =>
-    customer.name.toLowerCase().includes(search.toLowerCase())
+// ===== SEARCH CUSTOMERS =====
+const filteredCustomers = customers.filter((customer) => {
+  const searchText = search.toLowerCase();
+
+  return (
+    customer.name.toLowerCase().includes(searchText) ||
+    customer.phone.includes(search) ||
+    (customer.email || "").toLowerCase().includes(searchText)
   );
+});
+
+// ===== CUSTOMER STATISTICS =====
+const totalCustomers = customers.length;
+
+const customersWithPhone = customers.filter(
+  (customer) => customer.phone && customer.phone.trim() !== ""
+).length;
+
+const searchResults =
+  search.trim() === ""
+    ? 0
+    : filteredCustomers.length;
 
   return (
     <div style={{ display: "flex" }}>
@@ -93,25 +185,46 @@ function Customers() {
             Manage all your business customers.
           </p>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "20px",
-              gap: "10px",
-              flexWrap: "wrap",
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Search Customer..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                padding: "10px",
-                width: "300px",
-              }}
-            />
+<div className="stats-container">
+
+  <div className="stat-card blue">
+    <h2>{totalCustomers}</h2>
+    <p>
+  <FaUsers style={{ marginRight: "8px" }} />
+  Total Customers
+</p>
+  </div>
+
+  <div className="stat-card blue">
+    <h2>{searchResults}</h2>
+    <p>
+  <FaSearch style={{ marginRight: "8px" }} />
+  Search Results
+</p>
+  </div>
+
+  <div className="stat-card blue">
+    <h2>{customersWithPhone}</h2>
+    <p>
+  <FaPhoneAlt style={{ marginRight: "8px" }} />
+  With Phone No
+</p>
+  </div>
+
+</div>
+
+          <div className="customer-toolbar">
+   <div className="search-box">
+  <FaSearch className="search-icon" />
+
+  <input
+    type="text"
+    className="search-input"
+    placeholder="Search by name, phone or email..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+</div>
 
             <button
               className="action-button"
@@ -140,8 +253,8 @@ function Customers() {
 
           <CustomerTable
             customers={filteredCustomers}
-            onDelete={handleDeleteCustomer}
             onEdit={handleEditCustomer}
+            onDelete={handleDeleteCustomer}
           />
         </div>
       </div>
